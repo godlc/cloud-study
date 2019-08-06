@@ -1,4 +1,4 @@
-package com.laingcheng.cloudstudy;
+package com.liangcheng.cloudstudy;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
