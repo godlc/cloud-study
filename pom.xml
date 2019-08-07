@@ -5,18 +5,19 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.6.RELEASE</version>
+        <version>2.1.5.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.laingcheng</groupId>
     <artifactId>cloud-study</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <name>cloud-study</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
-        <docker.image.prefix>spring.io</docker.image.prefix>
+        <docker.image.prefix>springboot</docker.image.prefix>
     </properties>
 
     <dependencies>
@@ -24,7 +25,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -38,141 +38,26 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <!--dockerfile-->
+            <!-- Docker maven plugin -->
             <plugin>
                 <groupId>com.spotify</groupId>
-                <artifactId>dockerfile-maven-plugin</artifactId>
+                <artifactId>docker-maven-plugin</artifactId>
                 <version>1.4.9</version>
                 <configuration>
-                    <repository>${docker.image.prefix}/${project.artifactId}</repository>
+                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+                    <dockerDirectory>src/main/docker</dockerDirectory>
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+                    </resources>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.10</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                            <overWriteReleases>false</overWriteReleases>
-                            <overWriteSnapshots>false</overWriteSnapshots>
-                            <overWriteIfNewer>true</overWriteIfNewer>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-resources-plugin</artifactId>-->
-                <!--<version>2.7</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>copy-resources</id>-->
-                        <!--<phase>package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>copy-resources</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<encoding>UTF-8</encoding>-->
-                            <!--<outputDirectory>${project.build.directory}/config</outputDirectory>-->
-                            <!--<resources>-->
-                                <!--<resource>-->
-                                    <!--<directory>src/main/resources</directory>-->
-                                    <!--<filtering>true</filtering>-->
-                                <!--</resource>-->
-                            <!--</resources>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-jar-plugin</artifactId>-->
-                <!--<version>2.6</version>-->
-                <!--<configuration>-->
-                    <!--<excludes>-->
-                        <!--<exclude>*.keep</exclude>-->
-                        <!--<exclude>*.properties</exclude>-->
-                        <!--<exclude>*.yml</exclude>-->
-                        <!--<exclude>*.yaml</exclude>-->
-                        <!--<exclude>*.xml</exclude>-->
-                        <!--<exclude>config</exclude>-->
-                        <!--<exclude>config/*</exclude>-->
-                        <!--<exclude>config/*/*</exclude>-->
-                        <!--<exclude>config/*/*/*</exclude>-->
-                    <!--</excludes>-->
-                    <!--<archive>-->
-                        <!--<manifest>-->
-                            <!--<useUniqueVersions>false</useUniqueVersions>-->
-                            <!--<addClasspath>true</addClasspath>-->
-                            <!--<classpathPrefix>lib/</classpathPrefix>-->
-                            <!--&lt;!&ndash;在外部补充配置main方法的入口&ndash;&gt;-->
-                            <!--<mainClass>com.liangcheng.App</mainClass>-->
-                        <!--</manifest>-->
-                        <!--<manifestEntries>-->
-                            <!--<Class-Path>./config/</Class-Path>-->
-                        <!--</manifestEntries>-->
-                    <!--</archive>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
-            <!--<plugin>-->
-                <!--<artifactId>maven-source-plugin</artifactId>-->
-                <!--<version>3.0.0</version>-->
-                <!--<configuration>-->
-                    <!--<attach>true</attach>-->
-                <!--</configuration>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<phase>compile</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>jar</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
-            <!--<plugin>-->
-                <!--<groupId>org.codehaus.mojo</groupId>-->
-                <!--<artifactId>versions-maven-plugin</artifactId>-->
-                <!--<version>2.5</version>-->
-            <!--</plugin>-->
-            <!--<plugin>-->
-                <!--<groupId>org.codehaus.mojo</groupId>-->
-                <!--<artifactId>flatten-maven-plugin</artifactId>-->
-                <!--<version>1.0.0</version>-->
-                <!--<configuration>-->
-                    <!--<updatePomFile>true</updatePomFile>-->
-                    <!--<flattenMode>bom</flattenMode>-->
-                    <!--<pomElements>-->
-                        <!--<build>keep</build>-->
-                        <!--<scm>remove</scm>-->
-                        <!--<distributionManagement>remove</distributionManagement>-->
-                        <!--<repositories>remove</repositories>-->
-                        <!--<dependencyManagement>keep</dependencyManagement>-->
-                    <!--</pomElements>-->
-                <!--</configuration>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>flatten</id>-->
-                        <!--<phase>process-resources</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>flatten</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                    <!--<execution>-->
-                        <!--<id>flatten.clean</id>-->
-                        <!--<phase>clean</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>clean</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
+            <!-- Docker maven plugin -->
         </plugins>
     </build>
+
 
 </project>
