@@ -23,7 +23,6 @@ public class TimeClient {
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
-                        socketChannel
                         socketChannel.pipeline().addLast(new TimeClientChildHandler());
                     }
                 });
