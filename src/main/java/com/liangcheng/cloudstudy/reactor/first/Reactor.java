@@ -2,6 +2,7 @@ package com.liangcheng.cloudstudy.reactor.first;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
@@ -16,6 +17,13 @@ import java.util.Set;
  * @date 2019/8/21 16:40
  */
 public class Reactor implements Runnable {
+    public static void main(String[] args) throws IOException, InterruptedException {
+       Reactor reactor =  new Reactor(new Dispatch());
+       reactor.init(new InetSocketAddress(18088));
+       Thread t = new Thread(reactor);
+//       t.join();
+       t.start();
+    }
 
     private Selector selector;
     private Dispatch dispatch;
@@ -66,6 +74,10 @@ public class Reactor implements Runnable {
     }
 
     private void readHandle(SelectionKey key) throws IOException {
-
+        SocketChannel socketChannel = (SocketChannel) key.channel();
+        ByteBuffer by = ByteBuffer.allocate(1024);
+        socketChannel.read(by);
+        by.flip();
+        dispatch.handler(new HandleThread(new TranferDto(socketChannel, by)));
     }
 }

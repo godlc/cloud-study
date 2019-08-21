@@ -1,6 +1,7 @@
 package com.liangcheng.cloudstudy.reactor.first;
 
-import java.nio.ByteBuffer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author lc
@@ -8,12 +9,11 @@ import java.nio.ByteBuffer;
  * @date 2019/8/21 16:40
  */
 public class Dispatch {
-    enum Action {
-        w, r;
-    }
+
+    private ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(16);
 
 
-    public ByteBuffer handler(TranferDto dto) {
-        return null;
+    public void handler(Runnable r) {
+        executor.execute(r);
     }
 }

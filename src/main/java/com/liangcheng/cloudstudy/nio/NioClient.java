@@ -7,6 +7,8 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author lc
@@ -14,6 +16,36 @@ import java.util.Date;
  * @date 2019/8/16 13:23
  */
 public class NioClient {
+    public static void main(String[] args) {
+        ExecutorService pool = Executors.newFixedThreadPool(18);
+
+        long now = System.currentTimeMillis();
+        for (int i = 0; i < 100000; i++) {
+            pool.submit(() -> {
+                SocketChannel socketChannel = SocketChannel.open();
+                socketChannel.connect(new InetSocketAddress(18088));
+                socketChannel.configureBlocking(false);
+                while (true){
+                    long time =System.currentTimeMillis();
+                    ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+                    byteBuffer.put(("现在的时间是:" + new Date().toString()).getBytes("UTF-8"));
+                    byteBuffer.flip();
+                    socketChannel.write(byteBuffer);
+                    Thread.sleep(2000);
+                }
+
+            });
+
+        }
+        pool.shutdown();
+        Thread t = new Thread() {
+            @Override
+            public void run() {
+                System.out.println(System.currentTimeMillis() - now);
+            }
+        };
+        Runtime.getRuntime().addShutdownHook(t);
+    }
     public static void run() throws IOException, InterruptedException {
         SocketChannel socketChannel = SocketChannel.open();
         socketChannel.connect(new InetSocketAddress(18088));
@@ -28,9 +60,5 @@ public class NioClient {
             socketChannel.write(byteBuffer);
             Thread.sleep(2000);
         }
-    }
-
-    public static void main(String[] args) throws IOException, InterruptedException {
-        NioClient.run();
     }
 }
